@@ -51,6 +51,7 @@ header h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-left: 100px;
 }
 
 @media only screen and (max-width: 768px) {
@@ -62,9 +63,14 @@ header h1 {
   .game-board {
     width: 100%;
   }
+  .game-board {
+    padding: 0px 5px;
+  }
 
   .game-controls {
     width: 100%;
+    margin-left: 0px;
+    margin-top: 30px;
   }
 }
 </style>
