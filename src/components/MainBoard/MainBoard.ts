@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 
 interface MainBoardProps {
   selectedNumber: number
