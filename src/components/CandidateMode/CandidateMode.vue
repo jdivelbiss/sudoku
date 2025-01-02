@@ -3,7 +3,7 @@
 
 <template>
   <div class="candidate-mode">
-    <div class="normal active">Normal</div>
-    <div class="candidate">Candidate</div>
+    <div id="normal-candidate-mode" class="normal" @click="handleClick(false)">Normal</div>
+    <div id="candidate-candidate-mode" class="candidate" @click="handleClick(true)">Candidate</div>
   </div>
 </template>

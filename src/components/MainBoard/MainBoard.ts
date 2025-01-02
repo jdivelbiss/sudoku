@@ -1,7 +1,23 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
-export default {
-  setup() {
+interface MainBoardProps {
+  selectedNumber: number
+  candidateMode: boolean
+}
+
+export default defineComponent({
+  props: {
+    selectedNumber: {
+      type: Number,
+      default: 0,
+    },
+    candidateMode: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {},
+  setup(props: MainBoardProps) {
     const puzzle: string[][] = [
       ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
       ['-', '-', '-', '-', '-', '-', '-', '-', '-'],
@@ -67,6 +83,14 @@ export default {
       divCell.classList.add('selected')
     }
 
+    watch(
+      () => props.selectedNumber,
+      (newValue: number, oldValue: number) => {
+        console.log('OLD: %s - NEW: %s', oldValue, newValue)
+        console.log(props.candidateMode)
+      },
+    )
+
     return {
       getCellClass,
       getCellDisplayValue,
@@ -76,4 +100,4 @@ export default {
       selectedCell,
     }
   },
-}
+})

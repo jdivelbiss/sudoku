@@ -1,16 +1,46 @@
-import { ref } from 'vue'
+import { defineComponent, type SetupContext } from 'vue'
 
-export default {
-  setup() {
-    const count = ref(0)
+interface CandidateModeProps {
+  candidateMode: boolean
+}
 
-    const increment = () => {
-      count.value++
+export default defineComponent({
+  emits: ['mode-changed'],
+  props: {
+    candidateMode: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    setActiveMode(candidateMode: boolean) {
+      const toggleActive: string =
+        candidateMode === true ? 'candidate-candidate-mode' : 'normal-candidate-mode'
+      const toggleInActive: string =
+        candidateMode === true ? 'normal-candidate-mode' : 'candidate-candidate-mode'
+
+      document.getElementById(toggleActive)?.classList.add('active')
+      document.getElementById(toggleInActive)?.classList.remove('active')
+    },
+  },
+  setup(props: CandidateModeProps, ctx: SetupContext) {
+    function handleClick(candidateMode: boolean) {
+      ctx.emit('mode-changed', candidateMode)
     }
 
     return {
-      count,
-      increment,
+      handleClick,
     }
   },
-}
+  watch: {
+    candidateMode: {
+      handler: function (newValue: boolean) {
+        this.setActiveMode(newValue)
+      },
+      deep: true,
+    },
+  },
+  mounted() {
+    this.setActiveMode(this.$props.candidateMode)
+  },
+})

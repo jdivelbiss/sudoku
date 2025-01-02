@@ -1,5 +1,8 @@
+import type { SetupContext } from 'vue'
+
 export default {
-  setup() {
+  emits: ['number-clicked'],
+  setup(props: object, ctx: SetupContext) {
     const numbers: { label: string; value: number; class: string }[] = [
       { label: '1', value: 1, class: 'number-panel-option' },
       { label: '2', value: 2, class: 'number-panel-option' },
@@ -13,8 +16,13 @@ export default {
       { label: 'X', value: 0, class: 'number-panel-option clear-option' },
     ]
 
+    function handleClick(value: number) {
+      ctx.emit('number-clicked', value)
+    }
+
     return {
       numbers,
+      handleClick,
     }
   },
 }

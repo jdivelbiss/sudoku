@@ -3,7 +3,12 @@
 
 <template>
   <div class="number-panel">
-    <div v-for="item in numbers" v-bind:key="item.value" :class="item.class">
+    <div
+      v-for="item in numbers"
+      v-bind:key="item.value"
+      :class="item.class"
+      @click="handleClick(item.value)"
+    >
       {{ item.label }}
     </div>
   </div>

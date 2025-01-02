@@ -1,9 +1,21 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+
 import NumberPanel from '../components/NumberPanel/NumberPanel.vue'
 import MainBoard from '../components/MainBoard/MainBoard.vue'
-import CandidateMode from '../components/CandidateMode/CandidateMode.vue'
+import CandidateMode from '../components/CandidateMode.vue'
 import AutoCandidate from '../components/AutoCandidate/AutoCandidate.vue'
 import TimerPanel from '../components/TimerPanel/TimerPanel.vue'
+
+const selectedNumber = ref(0)
+function numberClicked(value: number) {
+  selectedNumber.value = value
+}
+
+const candidateMode = ref(false)
+function candidateModeClicked(mode: boolean) {
+  candidateMode.value = mode
+}
 </script>
 
 <template>
@@ -14,11 +26,11 @@ import TimerPanel from '../components/TimerPanel/TimerPanel.vue'
 
   <div class="game-area">
     <div class="game-board">
-      <MainBoard />
+      <MainBoard :selected-number="selectedNumber" />
     </div>
     <div class="game-controls">
-      <CandidateMode />
-      <NumberPanel />
+      <CandidateMode :candidate-mode="candidateMode" @mode-changed="candidateModeClicked" />
+      <NumberPanel @number-clicked="numberClicked" />
       <AutoCandidate />
     </div>
   </div>
