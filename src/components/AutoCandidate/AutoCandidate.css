@@ -1,9 +1,0 @@
-.auto-candidate {
-  display: flex;
-  width: 100%;
-}
-
-.auto-candidate span {
-  padding-left: 4px;
-  font-size: 12px;
-}

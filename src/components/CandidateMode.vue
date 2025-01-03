@@ -4,6 +4,7 @@
     <div id="candidate-candidate-mode" class="candidate" @click="handleClick(true)">Candidate</div>
   </div>
 </template>
+
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
 
