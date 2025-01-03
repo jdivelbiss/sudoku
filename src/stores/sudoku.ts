@@ -131,14 +131,18 @@ export const useSudokuStore = defineStore('sudoku', () => {
     const cell: BoardCell = getCell(row, col)
     if (cell.given) return
 
-    const idx: number = cell.candidates.indexOf(value)
-    if (idx > -1) {
-      cell.candidates.splice(idx, 1)
+    if (value > 0) {
+      const idx: number = cell.candidates.indexOf(value)
+      if (idx > -1) {
+        cell.candidates.splice(idx, 1)
+      } else {
+        cell.candidates.push(value)
+      }
+      cell.candidates.sort()
+      cell.guess = ''
     } else {
-      cell.candidates.push(value)
+      cell.candidates = []
     }
-    cell.candidates.sort()
-    cell.guess = ''
   }
 
   function setCellCandidates(value: number[], row: number, col: number) {

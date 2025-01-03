@@ -27,29 +27,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useSudokuStore } from '@/stores/sudoku'
 import NumberTile from './NumberTile.vue'
 import CandidateTile from './CandidateTile.vue'
 
 const store = useSudokuStore()
+const selectedCell = ref([0, 0])
 
 const emit = defineEmits<{
   selected: [cell: { row: number; col: number; value: string }]
 }>()
-
-const props = defineProps({
-  selectedNumber: {
-    type: Number,
-    default: 0,
-  },
-  candidateMode: {
-    type: Boolean,
-    default: false,
-  },
-})
-
-const selectedCell = ref([0, 0])
 
 function displayCandidates(row: number, col: number): boolean {
   const cell = store.board[row][col]
@@ -71,6 +59,15 @@ function getCellDisplayValue(row: number, col: number): string {
 function getCellClass(row: number, col: number): string {
   const classNane: string = 'board-col'
 
+  let cellSelected: string = ''
+  const cellEl: HTMLElement | null = document.getElementById(`r${row + 1}c${col + 1}`)
+  if (cellEl) {
+    // Anytime store.board is updated this method will be called.  Initially, before the DOM is ready
+    // cellEl will be null, so no need to worry about any existing classes.  However, once rendered,
+    // we may need to keep/remove class names based on certain conditions
+    cellSelected = cellEl.classList.contains('selected') ? 'selected' : ''
+  }
+
   let cellType: string = 'blank'
   const cell = store.board[row][col]
   if (cell.given) {
@@ -86,7 +83,7 @@ function getCellClass(row: number, col: number): string {
     borderStyle = 'group-col-border'
   }
 
-  return `${classNane} ${cellType} ${borderStyle}`
+  return `${classNane} ${cellType} ${borderStyle} ${cellSelected}`.trim()
 }
 
 function getRowClass(row: number): string {
@@ -122,32 +119,19 @@ function handleClick(event: MouseEvent, row: number, col: number) {
   emit('selected', { row: selectedRow, col: selectedCol, value: cellValue })
 }
 
-// function setCellValue(value: number, row: number, col: number) {
-//   store.setCellCandidate(value, row, col)
-// }
-
 function setCellValue(value: number) {
-  store.setCellValue(value, selectedCell.value[0], selectedCell.value[1])
+  if (selectedCell.value[0] > 0 && selectedCell.value[1] > 0) {
+    store.setCellValue(value, selectedCell.value[0], selectedCell.value[1])
+  }
 }
 
 function setCellCandidate(value: number) {
-  store.setCellValue(value, selectedCell.value[0], selectedCell.value[1])
+  if (selectedCell.value[0] > 0 && selectedCell.value[1] > 0) {
+    store.setCellCandidate(value, selectedCell.value[0], selectedCell.value[1])
+  }
 }
 
 defineExpose({ setCellValue, setCellCandidate })
-
-// watch(
-//   () => props.selectedNumber,
-//   (newValue: number) => {
-//     console.log('Number selected: %s', newValue)
-
-//     if (props.candidateMode) {
-//       store.setCellCandidate(newValue, selectedCell.value[0], selectedCell.value[1])
-//     } else {
-//       store.setCellValue(newValue, selectedCell.value[0], selectedCell.value[1])
-//     }
-//   },
-// )
 </script>
 
 <style scoped>

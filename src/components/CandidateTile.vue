@@ -14,6 +14,7 @@ const props = defineProps({
     required: true,
   },
 })
+
 const numbers = ref([
   { value: 1, picked: false },
   { value: 2, picked: false },

@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted } from 'vue'
 
 const emit = defineEmits<{
   changed: [candidateMode: boolean]
@@ -18,6 +18,7 @@ const props = defineProps({
     default: false,
   },
 })
+defineExpose({ setActiveMode })
 
 function setActiveMode(candidateMode: boolean) {
   const toggleActive: string =
@@ -36,13 +37,6 @@ function handleClick(candidateMode: boolean) {
 onMounted(() => {
   setActiveMode(props.candidateMode)
 })
-
-watch(
-  () => props.candidateMode,
-  (newValue: boolean) => {
-    setActiveMode(newValue)
-  },
-)
 </script>
 
 <style scoped>

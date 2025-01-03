@@ -7,25 +7,21 @@ import CandidateMode from '../components/CandidateMode.vue'
 import AutoCandidate from '../components/AutoCandidate.vue'
 import TimerPanel from '../components/TimerPanel.vue'
 
-const mainBoardRef = useTemplateRef('MainBoard')
+const mainBoardRef = useTemplateRef('main-board')
+const candidateModeRef = useTemplateRef('candidate-mode')
 
-const selectedNumber = ref(0)
 function numberClicked(value: number) {
-  // selectedNumber.value = value
-  mainBoardRef.value?.setCellValue(value)
+  if (candidateMode.value) {
+    mainBoardRef.value?.setCellCandidate(value)
+  } else {
+    mainBoardRef.value?.setCellValue(value)
+  }
 }
 
 const candidateMode = ref(false)
 function candidateModeClicked(mode: boolean) {
   candidateMode.value = mode
-}
-
-function cellSelected(cell: { row: number; col: number; value: string }) {
-  if (/^\d+$/.test(cell.value)) {
-    selectedNumber.value = Number(cell.value)
-  } else {
-    selectedNumber.value = 0
-  }
+  candidateModeRef.value?.setActiveMode(mode)
 }
 </script>
 
@@ -37,17 +33,12 @@ function cellSelected(cell: { row: number; col: number; value: string }) {
 
   <div class="game-area">
     <div class="game-board">
-      <MainBoard
-        ref="MainBoard"
-        :selected-number="selectedNumber"
-        @selected="cellSelected"
-        :candidate-mode="candidateMode"
-      />
+      <MainBoard ref="main-board" />
     </div>
     <div class="game-controls">
-      <CandidateMode :candidate-mode="candidateMode" @changed="candidateModeClicked" />
-      <NumberPanel @clicked="numberClicked" />
-      <AutoCandidate />
+      <CandidateMode ref="candidate-mode" @changed="candidateModeClicked" />
+      <NumberPanel ref="number-panel" @clicked="numberClicked" />
+      <AutoCandidate ref="auto-candidate" />
     </div>
   </div>
 
