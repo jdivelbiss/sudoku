@@ -7,12 +7,15 @@ import MainBoard from '../components/MainBoard.vue'
 import CandidateMode from '../components/CandidateMode.vue'
 import AutoCandidate from '../components/AutoCandidate.vue'
 import SettingsPanel from '../components/SettingsPanel.vue'
+import SolvedModal from '../components/SolvedModal.vue'
 
 const mainBoardRef = useTemplateRef('main-board')
 const candidateModeRef = useTemplateRef('candidate-mode')
 
 const store = useSudokuStore()
 const selectedCell = ref({} as BoardCell)
+
+
 
 function numberClicked(value: number, resolve: ClickedResolve) {
   const cellValue: number = Number(selectedCell.value.guess)
@@ -41,7 +44,10 @@ function cellSelected(cell: BoardCell) {
   <header>
     <h1>Sudoku - My Take</h1>
   </header>
-  <div class="game-area" v-if="!store.solved">
+
+  <SolvedModal :isOpen="store.solved" />
+
+  <div class="game-area">
     <SettingsPanel />
     <div class="game-container">
       <div class="game-board">
@@ -55,7 +61,6 @@ function cellSelected(cell: BoardCell) {
     </div>
   </div>
 
-  <div class="game-area" v-if="store.solved">YOU WON!!</div>
 
   <footer></footer>
 </template>
