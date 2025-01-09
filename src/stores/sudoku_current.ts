@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-export interface BoardCell {
+interface BoardCell {
   answer: string
   guess: string
   candidates: number[]
@@ -125,6 +125,7 @@ export const useSudokuStore = defineStore('sudoku', () => {
   }
 
   function checkPuzzle(): boolean {
+    const solved: boolean = true
     for (const boardRow in board.value) {
       for (const boardCol in board.value[boardRow]) {
         if (board.value[boardRow][boardCol].isCorrect === false) {
@@ -132,32 +133,7 @@ export const useSudokuStore = defineStore('sudoku', () => {
         }
       }
     }
-    return true
-  }
-
-  function numberUsed(checkNumber: number): boolean {
-    if (checkNumber < 1) {
-      return false
-    }
-
-    for (const boardRow in board.value) {
-      const rowGuesses: number[] = []
-      for (const boardCol in board.value[boardRow]) {
-        let cellValue: number = 0
-        if (board.value[boardRow][boardCol].given) {
-          cellValue = Number(board.value[boardRow][boardCol].answer)
-        } else {
-          cellValue = Number(board.value[boardRow][boardCol].guess)
-        }
-
-        rowGuesses.push(cellValue)
-      }
-
-      if (!rowGuesses.includes(checkNumber)) {
-        return false
-      }
-    }
-    return true
+    return solved
   }
 
   function setCellValue(value: number, row: number, col: number) {
@@ -203,7 +179,6 @@ export const useSudokuStore = defineStore('sudoku', () => {
   return {
     board,
     solved,
-    numberUsed,
     setCellValue,
     setCellCandidate,
     setCellCandidates,

@@ -3,8 +3,8 @@
     <div
       v-for="item in numbers"
       v-bind:key="item.value"
-      :class="item.class"
-      @click="handleClick(item.value)"
+      :class="getClassNames(item)"
+      @click="handleClick(item)"
     >
       {{ item.label }}
     </div>
@@ -12,25 +12,68 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useSudokuStore } from '@/stores/sudoku'
+
+const store = useSudokuStore()
+
 const emit = defineEmits<{
-  clicked: [number: number]
+  clicked: [number: number, resolve: ClickedResolve]
 }>()
 
-const numbers: { label: string; value: number; class: string }[] = [
-  { label: '1', value: 1, class: 'number-panel-option' },
-  { label: '2', value: 2, class: 'number-panel-option' },
-  { label: '3', value: 3, class: 'number-panel-option' },
-  { label: '4', value: 4, class: 'number-panel-option' },
-  { label: '5', value: 5, class: 'number-panel-option' },
-  { label: '6', value: 6, class: 'number-panel-option' },
-  { label: '7', value: 7, class: 'number-panel-option' },
-  { label: '8', value: 8, class: 'number-panel-option' },
-  { label: '9', value: 9, class: 'number-panel-option' },
-  { label: 'X', value: 0, class: 'number-panel-option clear-option' },
-]
+interface NumberPanel {
+  label: string
+  value: number
+  class: string
+  used?: boolean
+}
 
-function handleClick(value: number) {
-  emit('clicked', value)
+const numbers = ref([
+  { label: '1', value: 1, class: 'number-panel-option', used: false },
+  { label: '2', value: 2, class: 'number-panel-option', used: false },
+  { label: '3', value: 3, class: 'number-panel-option', used: false },
+  { label: '4', value: 4, class: 'number-panel-option', used: false },
+  { label: '5', value: 5, class: 'number-panel-option', used: false },
+  { label: '6', value: 6, class: 'number-panel-option', used: false },
+  { label: '7', value: 7, class: 'number-panel-option', used: false },
+  { label: '8', value: 8, class: 'number-panel-option', used: false },
+  { label: '9', value: 9, class: 'number-panel-option', used: false },
+  { label: 'X', value: 0, class: 'number-panel-option clear-option' },
+])
+
+export type ClickedResolve = (value: number) => void
+async function handleClick(item: NumberPanel) {
+  if (item.used) return
+
+  const cellValue: number = await new Promise((resolve: ClickedResolve) => {
+    emit('clicked', item.value, resolve)
+  })
+
+  if (item.value > 0) {
+    item.used = store.numberUsed(item.value)
+  } else {
+    // Cell was cleared, promise will return the value that was in it before it was cleared.
+    // Need to recheck if that value has been used or not
+    const panelItem: NumberPanel = getItemByValue(cellValue)
+    panelItem.used = store.numberUsed(cellValue)
+  }
+}
+
+function getItemByValue(value: number): NumberPanel {
+  return numbers.value.find((number: NumberPanel) => {
+    return number.value == value
+  }) as NumberPanel
+}
+
+function getClassNames(item: NumberPanel): string {
+  let classNames: string[] = item.class.split(' ')
+  if (item.used) {
+    classNames.push('used')
+  } else {
+    classNames = classNames.filter((c) => c !== 'used')
+  }
+
+  return classNames.join(' ')
 }
 </script>
 
@@ -75,6 +118,21 @@ function handleClick(value: number) {
   width: 100%;
   height: 40px;
   border-radius: 0%;
+}
+
+.used {
+  cursor: default;
+  color: gray;
+}
+
+.used:hover {
+  /* background-color: grey; */
+  border: none;
+}
+
+.used:active {
+  background-color: lightgray;
+  border: none;
 }
 
 @media only screen and (max-width: 768px) {

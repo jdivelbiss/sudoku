@@ -8,7 +8,7 @@
     >
       <div
         :class="getCellClass(rIndex, cIndex)"
-        @click="handleClick($event, rIndex, cIndex)"
+        @click="handleClick(rIndex, cIndex)"
         v-for="(col, cIndex) in rows"
         v-bind:key="cIndex"
         :id="'r' + (rIndex + 1) + 'c' + (cIndex + 1)"
@@ -19,7 +19,7 @@
         />
         <NumberTile
           v-show="!displayCandidates(rIndex, cIndex)"
-          :number="getCellDisplayValue(rIndex, cIndex)"
+          :cell="store.board[rIndex][cIndex]"
         />
       </div>
     </div>
@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useSudokuStore } from '@/stores/sudoku'
+import { useSudokuStore, type BoardCell } from '@/stores/sudoku'
 import NumberTile from './NumberTile.vue'
 import CandidateTile from './CandidateTile.vue'
 
@@ -36,7 +36,7 @@ const store = useSudokuStore()
 const selectedCell = ref([0, 0])
 
 const emit = defineEmits<{
-  selected: [cell: { row: number; col: number; value: string }]
+  selected: [cell: BoardCell]
 }>()
 
 function displayCandidates(row: number, col: number): boolean {
@@ -48,12 +48,6 @@ function displayCandidates(row: number, col: number): boolean {
 
 function getCell(row: number, col: number) {
   return store.board[row][col]
-}
-
-function getCellDisplayValue(row: number, col: number): string {
-  const cell = store.board[row][col]
-  if (cell.given) return cell.answer
-  return cell.guess
 }
 
 function getCellClass(row: number, col: number): string {
@@ -97,7 +91,7 @@ function getRowClass(row: number): string {
   return `${classNane} ${borderStyle}`
 }
 
-function handleClick(event: MouseEvent, row: number, col: number) {
+function handleClick(row: number, col: number) {
   const cells: HTMLElement[] = Array.from(document.querySelectorAll('.selected'))
   for (const cell of cells) {
     cell.classList.remove('selected')
@@ -112,11 +106,7 @@ function handleClick(event: MouseEvent, row: number, col: number) {
   ) as HTMLElement
   divCell.classList.add('selected')
 
-  const cellValue: string = store.board[row][col].given
-    ? store.board[row][col].answer
-    : store.board[row][col].guess
-
-  emit('selected', { row: selectedRow, col: selectedCol, value: cellValue })
+  emit('selected', store.board[row][col])
 }
 
 function setCellValue(value: number) {
@@ -176,5 +166,11 @@ defineExpose({ setCellValue, setCellCandidate })
 
 .selected {
   background-color: #ffd700;
+}
+
+@media only screen and (max-width: 768px) {
+  .board-col {
+    width: calc(100% / 9);
+  }
 }
 </style>

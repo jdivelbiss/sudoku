@@ -57,4 +57,14 @@ watch(
   width: 15px;
   color: darkgray;
 }
+@media only screen and (max-width: 768px) {
+  .candidate-tile {
+    width: 100%;
+  }
+
+  .candidate {
+    /* width: calc(100% / 3); */
+    width: 12px;
+  }
+}
 </style>
