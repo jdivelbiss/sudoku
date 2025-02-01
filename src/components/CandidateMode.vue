@@ -1,16 +1,19 @@
 <template>
   <div class="candidate-mode">
-    <div id="normal-candidate-mode" class="normal" @click="handleClick(false)">Normal</div>
-    <div id="candidate-candidate-mode" class="candidate" @click="handleClick(true)">Candidate</div>
+    <div ref="normalMode" class="normal" @click="handleClick(false)">Normal</div>
+    <div ref="candidateMode" class="candidate" @click="handleClick(true)">Candidate</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
-const emit = defineEmits<{
-  changed: [candidateMode: boolean]
-}>()
+export interface ModeChangedArgs {
+  candidateMode: boolean
+}
+
+const normalMode = ref()
+const candidateMode = ref()
 
 const props = defineProps({
   candidateMode: {
@@ -18,24 +21,29 @@ const props = defineProps({
     default: false,
   },
 })
-defineExpose({ setActiveMode })
 
-function setActiveMode(candidateMode: boolean) {
-  const toggleActive: string =
-    candidateMode === true ? 'candidate-candidate-mode' : 'normal-candidate-mode'
-  const toggleInActive: string =
-    candidateMode === true ? 'normal-candidate-mode' : 'candidate-candidate-mode'
+const emit = defineEmits<{
+  changed: [args: ModeChangedArgs]
+}>()
 
-  document.getElementById(toggleActive)?.classList.add('active')
-  document.getElementById(toggleInActive)?.classList.remove('active')
+function toggleActive() {
+  if (props.candidateMode !== true) {
+    normalMode.value.classList.add('active')
+    candidateMode.value.classList.remove('active')
+  } else {
+    normalMode.value.classList.remove('active')
+    candidateMode.value.classList.add('active')
+  }
 }
 
 function handleClick(candidateMode: boolean) {
-  emit('changed', candidateMode)
+  emit('changed', {candidateMode: candidateMode})
 }
 
 onMounted(() => {
-  setActiveMode(props.candidateMode)
+  watch(() => props.candidateMode, () => {
+    toggleActive();
+  }, {immediate: true});
 })
 </script>
 

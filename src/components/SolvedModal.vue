@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps, nextTick, onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import { useSlots } from 'vue'
 import JSConfetti from 'js-confetti'

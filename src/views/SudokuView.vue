@@ -4,8 +4,8 @@ import { useSudokuStore, type BoardCell } from '@/stores/sudoku'
 
 import NumberPanel, { type ClickedResolve } from '../components/NumberPanel.vue'
 import MainBoard from '../components/MainBoard.vue'
-import CandidateMode from '../components/CandidateMode.vue'
-import AutoCandidate from '../components/AutoCandidate.vue'
+import CandidateMode, { type ModeChangedArgs } from '../components/CandidateMode.vue'
+import AutoCandidate, { type AutoCandidateChangedArgs } from '../components/AutoCandidate.vue'
 import SettingsPanel from '../components/SettingsPanel.vue'
 import SolvedModal from '../components/SolvedModal.vue'
 
@@ -30,9 +30,13 @@ function numberClicked(value: number, resolve: ClickedResolve) {
 }
 
 const candidateMode = ref(false)
-function candidateModeClicked(mode: boolean) {
-  candidateMode.value = mode
-  candidateModeRef.value?.setActiveMode(mode)
+function candidateModeClicked(args: ModeChangedArgs): void {
+  candidateMode.value = args.candidateMode
+}
+
+const autoCandidateMode = ref(false)
+function autoCandidateModeClicked(args: AutoCandidateChangedArgs): void {
+  autoCandidateMode.value = args.autoCandidate
 }
 
 function cellSelected(cell: BoardCell) {
@@ -54,9 +58,9 @@ function cellSelected(cell: BoardCell) {
         <MainBoard ref="main-board" @selected="cellSelected" />
       </div>
       <div class="game-controls">
-        <CandidateMode ref="candidate-mode" @changed="candidateModeClicked" />
+        <CandidateMode ref="candidate-mode" @changed="candidateModeClicked" :candidateMode="candidateMode"/>
         <NumberPanel ref="number-panel" @clicked="numberClicked" />
-        <AutoCandidate ref="auto-candidate" />
+        <AutoCandidate ref="auto-candidate" @changed="autoCandidateModeClicked" :autoCandidate="autoCandidateMode"/>
       </div>
     </div>
   </div>

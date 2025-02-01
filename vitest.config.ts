@@ -7,8 +7,13 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: 'jsdom',
-      exclude: [...configDefaults.exclude, 'e2e/**'],
+      exclude: [...configDefaults.exclude, 'e2e/**', 'src/components/icons'],
       root: fileURLToPath(new URL('./', import.meta.url)),
+      coverage: {
+        provider: 'v8',
+        reporter: ['text', 'json', 'html'],
+        exclude: ['src/components/icons', '**/__tests__/**']
+      },
     },
   }),
 )

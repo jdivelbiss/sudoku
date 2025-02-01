@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps, ref } from 'vue'
+import { ref } from 'vue'
 import { onClickOutside } from '@vueuse/core'
 import { useSlots } from 'vue'
 const slots = useSlots()
